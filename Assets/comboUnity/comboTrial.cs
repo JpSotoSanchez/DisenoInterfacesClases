@@ -1,26 +1,43 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class comboTrial : MonoBehaviour 
 {
-    public float comboWindow = 0.5f; 
-    public string[] comboActions = { "Light Attack", "Heavy Attack", "Special Attack" }; 
+    public float comboWindow = 1.0f; 
+    public string[] comboActions = { "Left Jump", "Jump", "Right Jump" }; 
+    public string currentAction = "";
     private float timeSinceLastPress = 0f; 
-    private int currentComboStep = 0; 
+
+    public GameObject player;
     private bool isComboActive = false; 
-    private Animator animator; 
 
     void Start() 
     {
-        animator = GetComponent<Animator>(); 
     }
 
     void Update() 
     {
         timeSinceLastPress += Time.deltaTime; 
 
-        if (Input.GetButtonDown("Fire1")) 
+        if (Keyboard.current.qKey.wasPressedThisFrame)
         {
-            ExecuteCombo(); 
+            ExecuteCombo("q");
+
+        }
+        if(Keyboard.current.aKey.wasPressedThisFrame)
+        {
+                        ExecuteCombo("a");
+
+        }
+        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        {
+                        ExecuteCombo("u");
+
+        }
+        if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+        {
+                        ExecuteCombo("d");
+
         }
 
         if (timeSinceLastPress > comboWindow && isComboActive) 
@@ -29,36 +46,54 @@ public class comboTrial : MonoBehaviour
         }
     }
 
-    void ExecuteCombo() 
+    void ExecuteCombo(string key) 
     {
-        if (timeSinceLastPress < comboWindow) 
+        if (timeSinceLastPress < comboWindow)
         {
-            currentComboStep++; 
+            Debug.Log("onTime");
         }
-        else 
+        else
         {
-            currentComboStep = 1; 
+            ResetCombo();
         }
-
-        if (currentComboStep > comboActions.Length) 
-        {
-            currentComboStep = 1; 
-        }
-
-        PerformAttack(currentComboStep - 1); 
+        currentAction += key;
+        Debug.Log(currentAction);
         timeSinceLastPress = 0f; 
         isComboActive = true; 
     }
 
-    void PerformAttack(int comboIndex) 
+    void JumpRight()
     {
-        string attackType = comboActions[comboIndex]; 
-        animator.SetTrigger(attackType); 
+        
+    }
+    void JumpLeft()
+    {
+        
+    }
+
+    void Jump()
+    {
+        
     }
 
     void ResetCombo()
     {
-        currentComboStep = 0;
+        if (currentAction== "uuu")
+        {
+            JumpLeft();
+        }
+        if(currentAction == "uuddqa")
+        {
+            JumpRight();
+        }
+        if(currentAction == "uuudqa")
+        {
+            Jump();
+        }
+
         isComboActive = false;
+        currentAction = "";
+        Debug.Log("Reseted COmbo");
+        Debug.Log(currentAction);
     }
 }
